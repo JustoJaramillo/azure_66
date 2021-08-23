@@ -16,7 +16,8 @@ namespace azure_66.functions.Functions
             [Table("todo", Connection = "AzureWebJobsStorage")] CloudTable todoTable,
             ILogger log)
         {
-            log.LogInformation($"Deleting completed todo function executed at: {DateTime.Now}");
+            log.LogInformation($"Deleting completed todo function executed at: {DateTime.UtcNow}");
+
             string filter = TableQuery.GenerateFilterConditionForBool("IsCompleted",QueryComparisons.Equal,true);
             TableQuery<TodoEntity> query = new TableQuery<TodoEntity>().Where(filter);
             TableQuerySegment<TodoEntity> completedTodos = await todoTable.ExecuteQuerySegmentedAsync(query, null);
@@ -26,7 +27,7 @@ namespace azure_66.functions.Functions
                 await todoTable.ExecuteAsync(TableOperation.Delete(completedTodo));
                 deleted++;
             }
-            log.LogInformation($"Delete: {deleted} items at: {DateTime.UtcNow} ");
+            log.LogInformation($"Deleted: {deleted} items at: {DateTime.UtcNow} ");
         }
     }
 }
